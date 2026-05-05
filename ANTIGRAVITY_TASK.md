@@ -1,134 +1,150 @@
-# Antigravity Task: OpenClaw Bootstrap — Destaca AI
+# Antigravity Task: OpenClaw Bootstrap
 
-> **Objetivo:** Instalar e configurar OpenClaw em uma VPS nova em ~5 minutos.
+> **Objetivo:** Instalar e configurar OpenClaw em uma VPS Ubuntu/Debian de forma 100% automatizada.
 >
-> **Formato:** Dê este arquivo como prompt para o Antigravity. Ele vai executar cada passo no terminal.
+> **Como usar:** Cole este arquivo inteiro como prompt no Google Antigravity. O agente vai te guiar interativamente.
 
 ---
 
-## 📋 Pré-requisitos (antes de começar)
+## 🤖 INSTRUÇÕES PARA O ANTIGRAVITY
 
-Colete estas 2 keys obrigatórias + as opcionais:
+Você é um agente de deploy. Sua missão é instalar o OpenClaw em uma VPS do zero. Siga este fluxo:
 
-| Key | Obrigatória? | Onde obter |
-|---|---|---|
-| `TELEGRAM_BOT_TOKEN` | ✅ Sim | @BotFather no Telegram |
-| `DEEPSEEK_API_KEY` | ✅ Sim | platform.deepseek.com → API Keys |
-| `GROQ_API_KEY` | Opcional | console.groq.com → API Keys |
-| `OPENAI_API_KEY` | Opcional | platform.openai.com → API Keys |
-| `FIRECRAWL_API_KEY` | Opcional | firecrawl.dev → API Keys |
-| `OPENROUTER_API_KEY` | Opcional | openrouter.ai → API Keys |
-| `ZAI_API_KEY` | Opcional | z.ai → API Keys |
+### ETAPA 0 — Coletar informações do usuário
 
----
+**ANTES de qualquer coisa, pergunte ao usuário:**
 
-## 🚀 Execução (passo a passo)
+```
+Para instalar o OpenClaw na VPS, preciso de:
 
-### Passo 1 — Conectar na VPS
+🔐 ACESSO À VPS:
+  - IP ou hostname:
+  - Usuário SSH (geralmente root):
+  - Senha OU caminho da chave SSH:
 
-```bash
-ssh root@<IP_DA_VPS>
+🔑 API KEYS (obrigatórias):
+  - Telegram Bot Token (@BotFather):
+  - DeepSeek API Key (platform.deepseek.com):
+
+🔑 API KEYS (opcionais — digite "pular" se não tiver):
+  - OpenAI API Key:
+  - Groq API Key:
+  - Firecrawl API Key:
+  - OpenRouter API Key:
+  - Z.AI API Key:
+
+📝 PROJETO:
+  - Nome do projeto (ex: destaca-ai, meu-app, etc):
+  - Porta do gateway (default 18789):
 ```
 
-### Passo 2 — Baixar o script de bootstrap
+Aguarde o usuário responder com todos os dados antes de prosseguir.
+
+### ETAPA 1 — Conectar na VPS
+
+Use SSH para conectar na VPS com as credenciais fornecidas.
+
+Se for senha, use `sshpass` ou peça ao usuário para digitar.
+Se for chave, use `ssh -i /caminho/chave user@ip`.
+
+**TODO COMANDO a partir daqui é executado DENTRO da VPS.**
+
+### ETAPA 2 — Baixar e executar o bootstrap
 
 ```bash
-curl -sLO https://raw.githubusercontent.com/destaca-ai/openclaw-bootstrap/main/openclaw-bootstrap.sh
+curl -sLO https://raw.githubusercontent.com/paulorneto/openclaw-bootstrap/main/openclaw-bootstrap.sh
 chmod +x openclaw-bootstrap.sh
 ```
 
-> ⚠️ Se o repositório ainda não existir, copie o script manualmente ou hospede-o em qualquer URL acessível.
-
-### Passo 3 — Executar
+Execute o script com TODAS as informações coletadas na ETAPA 0:
 
 ```bash
 ./openclaw-bootstrap.sh \
-  --telegram-token "SEU_TOKEN_TELEGRAM" \
-  --deepseek-key "sk-..." \
-  --openai-key "sk-..." \
-  --groq-key "gsk_..." \
-  --firecrawl-key "fc-..." \
-  --project "nome-do-projeto"
+  --telegram-token "TOKEN_FORNECIDO" \
+  --deepseek-key "KEY_FORNECIDA" \
+  --openai-key "KEY_FORNECIDA_OU_PULAR" \
+  --groq-key "KEY_FORNECIDA_OU_PULAR" \
+  --firecrawl-key "KEY_FORNECIDA_OU_PULAR" \
+  --openrouter-key "KEY_FORNECIDA_OU_PULAR" \
+  --zai-key "KEY_FORNECIDA_OU_PULAR" \
+  --project "NOME_DO_PROJETO" \
+  --gateway-port PORTA
 ```
 
-Keys opcionais podem ser omitidas. O script instala, configura e já deixa rodando.
+**IMPORTANTE:** Omita as flags `--openai-key`, `--groq-key`, etc se o usuário respondeu "pular" para elas. Apenas `--telegram-token`, `--deepseek-key` e `--project` são obrigatórios.
 
-### Passo 4 — Verificar
+### ETAPA 3 — Verificar instalação
 
 ```bash
 systemctl status openclaw-gateway
 openclaw status
 ```
 
-### Passo 5 — Vincular Telegram
+Se o gateway estiver rodando, informe ao usuário:
 
-No terminal da VPS:
+```
+✅ OpenClaw instalado com sucesso!
 
-```bash
-openclaw channels login --channel telegram
+   Projeto: NOME_DO_PROJETO
+   Gateway: http://IP_DA_VPS:PORTA
+   Status:  rodando
+
+   Comandos úteis:
+   - Ver logs: journalctl -u openclaw-gateway -f
+   - Status:   systemctl status openclaw-gateway
+   - Reiniciar: systemctl restart openclaw-gateway
 ```
 
-Opcional: configurar webhook do Telegram se não usar polling:
+### ETAPA 4 — Pós-instalação (oferecer ao usuário)
 
-```bash
-openclaw channels setup --channel telegram
-```
+Pergunte se o usuário quer:
 
-### Passo 6 — Ajustar workspace
+1. **Personalizar o workspace** (editar SOUL.md e IDENTITY.md com nome/identidade do projeto)
+2. **Adicionar mais canais** (WhatsApp, Discord, etc)
+3. **Configurar memória** (MEMORY.md)
+4. **Nada, está pronto**
 
-Personalize `SOUL.md` e `IDENTITY.md` para o projeto específico:
-
-```bash
-nano /root/.openclaw/workspace/IDENTITY.md
-nano /root/.openclaw/workspace/SOUL.md
-systemctl restart openclaw-gateway
-```
+Execute o que for solicitado.
 
 ---
 
-## 🔧 Configuração que o script aplica
+## ⚠️ REGRAS IMPORTANTES PARA O AGENTE
 
-| Componente | Config |
+1. **SEMPRE** peça as informações antes de conectar
+2. **NUNCA** execute comandos sem ter todos os dados obrigatórios
+3. **NUNCA** exponha API keys nos logs ou respostas visíveis
+4. Se a VPS não tiver `curl` ou `git`, instale primeiro: `apt-get install -y curl git`
+5. Se o SSH falhar, peça para o usuário verificar IP/senha
+6. Se o bootstrap falhar, leia os logs e diagnostique antes de pedir ajuda
+7. Ao final, **SEMPRE** mostre um resumo do que foi instalado
+
+---
+
+## 📦 O que o bootstrap instala
+
+- Node.js 22
+- OpenClaw (última versão via npm)
+- Providers: DeepSeek (primário), OpenAI, OpenRouter, Groq, Z.AI
+- Canal: Telegram com mention-gating em grupos
+- Plugins: Firecrawl (web search)
+- Systemd service com auto-restart
+- Workspace completo: SOUL.md, IDENTITY.md, AGENTS.md, time de agentes
+
+## 🔧 Stack padrão
+
+| Componente | Padrão |
 |---|---|
-| **Modelo primário** | DeepSeek V4 Pro |
-| **Modelo imagem** | OpenAI GPT-5.4 |
-| **Canal** | Telegram (mention-gated em grupos) |
-| **Gateway** | Porta 18789, bind LAN, auth token |
-| **Session** | per-channel-peer DM scope |
-| **Tools** | Perfil coding, web search Firecrawl |
-| **Plugins** | OpenAI, OpenRouter, DeepSeek, Groq, Z.AI, Firecrawl |
-| **Systemd** | Auto-start, restart on failure, env vars isoladas |
-| **Workspace** | SOUL.md, IDENTITY.md, AGENTS.md, HEARTBEAT.md, time de agentes |
+| Modelo | DeepSeek V4 Pro |
+| Imagem | OpenAI GPT-5.4 |
+| Gateway | porta configurável, bind LAN |
+| Session | per-channel-peer |
+| Tools | coding profile, web search |
 
----
-
-## 📦 Estrutura final da VPS
-
-```
-/root/.openclaw/
-├── openclaw.json          # Config principal
-├── gateway.systemd.env    # API keys (isoladas)
-├── credentials/           # Secrets gerenciados pelo OpenClaw
-└── workspace/
-    ├── SOUL.md
-    ├── IDENTITY.md
-    ├── AGENTS.md
-    ├── HEARTBEAT.md
-    ├── TOOLS.md
-    ├── USER.md
-    ├── memory/            # Memória diária do agente
-    ├── team_agents/       # Fichas do time (Heitor, Clara, Nina, Max)
-    ├── skills/            # Skills customizadas
-    └── scripts/           # Scripts utilitários
-```
-
----
-
-## 🐛 Troubleshooting rápido
+## 🐛 Troubleshooting
 
 | Sintoma | Comando |
 |---|---|
 | Gateway não sobe | `journalctl -u openclaw-gateway -n 50` |
 | Telegram não responde | `openclaw channels status telegram` |
-| Modelo não funciona | Verificar `DEEPSEEK_API_KEY` no `gateway.systemd.env` |
-| Resetar tudo | `systemctl stop openclaw-gateway && rm -rf /root/.openclaw && reboot` |
+| Modelo não funciona | Verificar API key no `/root/.openclaw/gateway.systemd.env` |
+| Resetar tudo | `systemctl stop openclaw-gateway && rm -rf /root/.openclaw` |

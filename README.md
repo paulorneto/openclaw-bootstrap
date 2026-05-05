@@ -12,7 +12,7 @@ Instala e configura OpenClaw em qualquer VPS Ubuntu/Debian em ~5 minutos.
 ## Uso rápido
 
 ```bash
-curl -sLO https://raw.githubusercontent.com/destaca-ai/openclaw-bootstrap/main/openclaw-bootstrap.sh
+curl -sLO https://raw.githubusercontent.com/paulorneto/openclaw-bootstrap/main/openclaw-bootstrap.sh
 chmod +x openclaw-bootstrap.sh
 ./openclaw-bootstrap.sh \
   --telegram-token "SEU_TOKEN" \
