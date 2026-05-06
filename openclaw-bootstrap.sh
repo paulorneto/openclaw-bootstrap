@@ -161,6 +161,19 @@ Each session, you wake up fresh. These files _are_ your memory. Read them. Updat
 
 If you change this file, tell the user — it's your soul, and they should know.
 
+## 🧠 Estratégia de Modelos
+
+**Leia sempre `STRATEGY.md` ao iniciar.** Define hierarquia de modelos e quando usar cada um.
+
+Regra rápida:
+- DeepSeek V4 Pro → 90% do volume (diário)
+- DeepSeek V4 Flash → tarefas simples, heartbeats
+- GPT-5.4 Fast → quando DeepSeek falhar 2x
+- GPT-5.4 → decisões críticas (raro)
+- Claude Code → codificação pesada (ACP)
+
+Não queime crédito caro à toa. Comece sempre pelo mais barato.
+
 ---
 
 _This file is yours to evolve. As you learn who you are, update it._
@@ -481,7 +494,100 @@ _(What do they care about? What projects are they working on? What annoys them? 
 The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
 UEOF
 
-log "Workspace files criados."
+cat > "${WORKSPACE_DIR}/STRATEGY.md" << 'STRATEGYEOF'
+# STRATEGY.md — Estratégia de Modelos e Ferramentas
+
+> **Lido pelo agente em todo startup.** Define quando usar cada modelo e ferramenta.
+
+---
+
+## 🧠 Hierarquia de Modelos
+
+### Regra de Ouro
+**Sempre comece com o modelo mais barato que resolve o problema.** Escale só quando necessário.
+
+### Tier 1 — Motor Diário (90% do volume)
+- **Modelo:** DeepSeek V4 Pro (`deepseek/deepseek-v4-pro`, alias: `Pro`)
+- **Quando usar:** SEMPRE. É o default. Toda conversa, task, raciocínio, pesquisa.
+- **Custo:** ~$1.25/M input, ~$5/M output
+- **Fallback automático:** Se falhar, tentar DeepSeek V4 Flash
+
+### Tier 2 — Rápido e Barato
+- **Modelo:** DeepSeek V4 Flash (`deepseek/deepseek-v4-flash`, alias: `Flash`)
+- **Quando usar:** Tarefas simples, heartbeats, resumos, verificações rotineiras
+- **Custo:** ~$0.50/M input, ~$2/M output
+
+### Tier 3 — Tarefas Complexas
+- **Modelo:** GPT-5.4 Fast (`openai/gpt-5.4-fast`)
+- **Quando usar:**
+  - DeepSeek falhou ou deu resposta ruim 2x seguidas
+  - Raciocínio multi-etapas muito complexo
+  - Análise de código grande e intrincado
+  - Tarefa que exige precisão cirúrgica
+- **Custo médio-alto.** Usar com moderação.
+
+### Tier 4 — Emergências e Decisões Críticas
+- **Modelo:** GPT-5.4 (`openai/gpt-5.4`, alias: `GPT`)
+- **Quando usar:**
+  - Decisão estratégica de alto impacto
+  - Análise que DeepSeek + GPT-5.4 Fast não resolveram
+  - Situação onde errar custa caro (financeiro, legal, reputação)
+- **Custo muito alto (~$75/M input).** Usar excepcionalmente.
+
+### Tier 5 — Codificação Pesada
+- **Ferramenta:** Claude Code (via ACP ou terminal, NÃO via OpenClaw)
+- **Quando usar:**
+  - Refatoração grande
+  - Feature complexa do zero
+  - Debugging profundo de sistema
+  - PR review detalhado
+- **Plano:** Claude Pro (R$99/mês, acesso ilimitado ao Claude Code)
+
+---
+
+## 🎯 Decisão Rápida
+
+| Situação | Usar |
+|---|---|
+| Conversa normal, pesquisa, estratégia | DeepSeek V4 Pro |
+| Resumo, heartbeat, verificação simples | DeepSeek V4 Flash |
+| DeepSeek falhou 2x | GPT-5.4 Fast |
+| Decisão crítica sem margem pra erro | GPT-5.4 |
+| Escrever/refatorar código pesado | Claude Code (ACP) |
+| Gerar imagem | OpenAI GPT-5.4 (DALL-E via imageModel) |
+| Transcrição de áudio | Groq Whisper (whisper-large-v3-turbo) |
+
+---
+
+## 💰 Orçamento Mensal Alvo
+
+| Provider | Limite sugerido |
+|---|---|
+| DeepSeek | $100/mês (volume principal) |
+| OpenAI API | $50/mês (imagens + emergências) |
+| Groq | $10/mês (transcrições) |
+| Claude Pro | R$99/mês (fixo, coding) |
+
+**Total:** ~$160/mês em API + R$99 Claude
+
+---
+
+## 🔄 Troca de Modelo no OpenClaw
+
+O agente NÃO troca de modelo sozinho. Para trocar:
+- `/model Pro` → DeepSeek V4 Pro
+- `/model Flash` → DeepSeek V4 Flash
+- `/model GPT` → GPT-5.4
+- `/model GLM` → GLM-5.1
+
+Para imagem: `/imagemodel <model>`
+
+---
+
+_Esta estratégia é revisada mensalmente com base em custo e qualidade observados._
+STRATEGYEOF
+
+log "Workspace files criados (incluindo estratégia de modelos)."
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # FASE 5: Configuração do OpenClaw
